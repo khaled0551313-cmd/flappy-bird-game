@@ -25,11 +25,12 @@ jobs:
 
       - name: Install System Dependencies
         run: |
+          sudo dpkg --add-architecture i386
           sudo apt-get update
           sudo apt-get install -y \
             git wget curl build-essential libssl-dev zlib1g-dev \
             libncurses5-dev libncursesw5-dev libsqlite3-dev \
-            libffi-dev unzip zip openjdk-17-jdk
+            libffi-dev unzip zip openjdk-17-jdk ant libltdl7
 
       - name: Install Python Dependencies & Buildozer
         run: |
@@ -37,15 +38,11 @@ jobs:
           pip install --upgrade cython==0.29.36 virtualenv
           pip install --upgrade buildozer
 
-      - name: Pre-create Buildozer directories and accept SDK licenses
-        run: |
-          mkdir -p ~/.buildozer/android/platform/android-sdk
-          # تشغيل أمر وهمي لإنشاء هيكل مجلدات الـ SDK وتحميل الـ command-line tools
-          buildozer --version
-
       - name: Build APK with Buildozer
+        env:
+          AA_ACCEPT_SDK_LICENSE: "True"
         run: |
-          buildozer -v android debug
+          yes | buildozer -v android debug
 
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
