@@ -37,7 +37,8 @@ jobs:
       - name: Install Python Dependencies & Buildozer
         run: |
           python -m pip install --upgrade pip
-          pip install --upgrade cython virtualenv
+          # تثبيت إصدار Cython مستقر ومتوافق تماماً مع بايثون-أندرويد
+          pip install "cython<3.0,>=0.29.33" virtualenv
           pip install --upgrade buildozer
 
       - name: Setup Android SDK and Environment
