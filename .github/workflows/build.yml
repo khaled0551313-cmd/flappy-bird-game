@@ -40,18 +40,25 @@ jobs:
           pip install --upgrade "cython<3.0" virtualenv
           pip install --upgrade buildozer
 
-      - name: Pre-install Android SDK & Build Tools (Fix Aidl Error)
+      - name: Setup Android SDK and Correct Paths
         run: |
-          mkdir -p ~/.buildozer/android/platform/android-sdk/cmdline-tools/latest
-          # تحميل أدوات سطر الأوامر الخاصة بأندرويد لضمان توفر sdkmanager والأدوات بداخلها
+          SDK_DIR="$HOME/.buildozer/android/platform/android-sdk"
+          mkdir -p "$SDK_DIR/cmdline-tools/latest"
+          
+          # تحميل أدوات الأندرويد الحديثة
           wget -q https://dl.google.com/android/repository/commandlinetools-linux-9477386_latest.zip -O /tmp/cmdtools.zip
           unzip -q /tmp/cmdtools.zip -d /tmp/
-          rm -rf ~/.buildozer/android/platform/android-sdk/cmdline-tools/latest/*
-          mv /tmp/cmdline-tools/* ~/.buildozer/android/platform/android-sdk/cmdline-tools/latest/
+          rm -rf "$SDK_DIR/cmdline-tools/latest/*"
+          mv /tmp/cmdline-tools/* "$SDK_DIR/cmdline-tools/latest/"
           
-          # قبول رخص أندرويد وتثبيت build-tools و platform-tools و aidl تلقائياً
-          export PATH=$PATH:~/.buildozer/android/platform/android-sdk/cmdline-tools/latest/bin
-          yes | sdkmanager --sdk_root=~/.buildozer/android/platform/android-sdk "platforms;android-33" "build-tools;33.0.2" "platform-tools"
+          # إنشاء رابط رمزى (Symlink) لكي تجد Buildozer أداة sdkmanager في المسار القديم والجديد معاً
+          mkdir -p "$SDK_DIR/tools/bin"
+          ln -s "$SDK_DIR/cmdline-tools/latest/bin/sdkmanager" "$SDK_DIR/tools/bin/sdkmanager"
+
+          # قبول الرخص وتثبيت الحزم المطلوبة مسبقاً
+          export PATH="$SDK_DIR/cmdline-tools/latest/bin:$PATH"
+          yes | sdkmanager --sdk_root="$SDK_DIR" --licenses || true
+          yes | sdkmanager --sdk_root="$SDK_DIR" "platforms;android-33" "build-tools;33.0.2" "platform-tools"
 
       - name: Build APK with Buildozer
         env:
