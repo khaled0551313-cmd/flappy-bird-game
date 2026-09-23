@@ -40,7 +40,7 @@ jobs:
           pip install --upgrade "cython<3.0" virtualenv
           pip install --upgrade buildozer
 
-      - name: Download & Setup Android SDK/NDK Manually
+      - name: Setup Android SDK and Environment
         run: |
           SDK_DIR="$HOME/.buildozer/android/platform/android-sdk"
           mkdir -p "$SDK_DIR/cmdline-tools/latest"
