@@ -1,62 +1,40 @@
 [app]
 
 # (str) Title of your application
-title = Bird Kind 3D
+title = My 3D Game
 
 # (str) Package name
-package.name = birdkind3d
+package.name = my3dgame
 
-# (str) Package domain (needed for android packaging)
-package.domain = org.bird3d
+# (str) Package domain (needed for android/ios packaging)
+package.domain = org.game
 
-# (str) Source directory where the application files are located
+# (str) Source code where the main.py live
 source.dir = .
 
-# (list) Source files to include (let it include python and assets)
-source.include_exts = py,png,jpg,kv,atlas
-
-# (list) List of inclusion & exclusion patterns
-source.include_patterns = assets/*,images/*.png
-
-# (str) Application versioning
-version = 1.0
+# (list) Source files to include (let it empty to include all)
+source.include_exts = py,png,jpg,kv,atlas,ttf,obj
 
 # (list) Application requirements
+# تأكد هنا من إضافة pygame والمكتبات التي تعتمد عليها اللعبة
 requirements = python3,pygame
 
-# (str) Supported orientations
-orientation = portrait
+# (str) Supported orientations (landscape أفضل للألعاب الثلاثية الأبعاد)
+orientation = landscape
+
+# (bool) Indicate if the application should be fullscreen or not
+fullscreen = 1
 
 # (list) Permissions
-# android.permissions = INTERNET
+android.permissions = INTERNET
+
+# (str) Supported archs (أفضل وأسرع توافق للأندرويد الحديث)
+android.archs = arm64-v8a
 
 [buildozer]
 
-# (int) Log level (0 = error only, 1 = info, 2 = debug)
+# (int) Log level (0 = error only, 1 = info, 2 = debug (with command output))
 log_level = 2
 
 # (int) Display warning if buildozer is run as root (0 = False, 1 = True)
 warn_on_root = 1
-
-[android]
-
-# (int) Target Android API
-android.api = 33
-
-# (int) Minimum API your APK will support
-android.minapi = 24
-
-# الموافقة التلقائية على رخص الأندرويد لمنع توقف أداة aidl
-android.accept_sdk_license = True
-
-# عدم تخطي التحديث لضمان جلب الأدوات الناقصة تلقائياً
-android.skip_update = False
-
-# (bool) Use --private data storage
-android.private_storage = True
-
-# (list) The Android archs to build for
-android.archs = arm64-v8a, armeabi-v7a
-
-# (bool) Enable AndroidX support
-android.androidx = True
