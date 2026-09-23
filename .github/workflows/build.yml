@@ -40,6 +40,19 @@ jobs:
           pip install --upgrade "cython<3.0" virtualenv
           pip install --upgrade buildozer
 
+      - name: Pre-install Android SDK & Build Tools (Fix Aidl Error)
+        run: |
+          mkdir -p ~/.buildozer/android/platform/android-sdk/cmdline-tools/latest
+          # تحميل أدوات سطر الأوامر الخاصة بأندرويد لضمان توفر sdkmanager والأدوات بداخلها
+          wget -q https://dl.google.com/android/repository/commandlinetools-linux-9477386_latest.zip -O /tmp/cmdtools.zip
+          unzip -q /tmp/cmdtools.zip -d /tmp/
+          rm -rf ~/.buildozer/android/platform/android-sdk/cmdline-tools/latest/*
+          mv /tmp/cmdline-tools/* ~/.buildozer/android/platform/android-sdk/cmdline-tools/latest/
+          
+          # قبول رخص أندرويد وتثبيت build-tools و platform-tools و aidl تلقائياً
+          export PATH=$PATH:~/.buildozer/android/platform/android-sdk/cmdline-tools/latest/bin
+          yes | sdkmanager --sdk_root=~/.buildozer/android/platform/android-sdk "platforms;android-33" "build-tools;33.0.2" "platform-tools"
+
       - name: Build APK with Buildozer
         env:
           COLORTERM: "yes"
