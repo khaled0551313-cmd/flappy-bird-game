@@ -20,7 +20,7 @@ version = 0.1
 
 # (list) Application requirements
 # تم إزالة numpy واستبدالها بمكتبة الـ 3D لضمان نجاح البناء على أندرويد
-requirements = python3, pygame, pygame-3d-engine
+requirements = python3, pygame
 
 # (str) Supported orientations (landscape, portrait or all)
 orientation = landscape
