@@ -46,8 +46,11 @@ android.api = 33
 # (int) Minimum API your APK will support
 android.minapi = 24
 
-# ملاحظة: تركنا NDK فارغاً لكي يتعرف عليه سيرفر غيت هاب تلقائياً ويتجنب التعسف البرمجي
-# android.ndk = 
+# الموافقة التلقائية على رخص الأندرويد لمنع توقف أداة aidl
+android.accept_sdk_license = True
+
+# عدم تخطي التحديث لضمان جلب الأدوات الناقصة تلقائياً
+android.skip_update = False
 
 # (bool) Use --private data storage
 android.private_storage = True
