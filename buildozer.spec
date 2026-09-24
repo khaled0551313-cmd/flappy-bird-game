@@ -5,7 +5,7 @@ package.name = birdsanctuary
 package.domain = org.cozy
 source.dir = .
 source.include_exts = py
-requirements = python3,pygame
+requirements = python3==3.10,pygame
 version = 0.1
 orientation = portrait
 fullscreen = 1
