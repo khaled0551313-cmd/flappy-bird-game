@@ -32,29 +32,19 @@ jobs:
           pip install --upgrade cython
           pip install --upgrade buildozer
 
-      - name: Force setup SDKManager in both old and new paths
+      - name: Setup SDKManager and paths
         run: |
           export ANDROID_HOME=$HOME/.buildozer/android/platform/android-sdk
-          
-          # إنشاء كلا المسارين (الحديث والقديم) لضمان عدم فشل Buildozer أبدأً
           mkdir -p $ANDROID_HOME/cmdline-tools/latest
           mkdir -p $ANDROID_HOME/tools/bin
           
-          # تحميل أدوات سطر الأوامر الرسمية
           wget -q https://dl.google.com/android/repository/commandlinetools-linux-9477386_latest.zip -O /tmp/cmdtools.zip
           unzip -q /tmp/cmdtools.zip -d /tmp/cmd-tools-temp
-          
-          # نسخ الأدوات للمسار الحديث
           cp -r /tmp/cmd-tools-temp/cmdline-tools/* $ANDROID_HOME/cmdline-tools/latest/
-          
-          # نسخ الأدوات وتكرارها بالكامل للمسار القديم الذي يصر بيلدوزر على البحث فيه
           cp -r /tmp/cmd-tools-temp/cmdline-tools/bin/* $ANDROID_HOME/tools/bin/
           cp -r /tmp/cmd-tools-temp/cmdline-tools/lib $ANDROID_HOME/tools/ || true
           
-          # قبول التراخيص مسبقاً
           yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --sdk_root=$ANDROID_HOME --licenses || true
-          
-          rm -rf /tmp/cmdtools.zip /tmp/cmd-tools-temp
 
       - name: Build with Buildozer
         env:
@@ -64,7 +54,17 @@ jobs:
         run: buildozer -v android debug
 
       - name: Upload APK Artifact
+        if: success()
         uses: actions/upload-artifact@v4
         with:
           name: package
           path: bin/*.apk
+
+      - name: Upload Build Logs on Failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-logs
+          path: |
+            .buildozer/*.log
+            .buildozer/android/platform/*.log
