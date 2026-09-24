@@ -26,10 +26,10 @@ jobs:
               libtinfo5 cmake libffi-dev libssl-dev openjdk-17-jdk \
               ant build-essential ccache
 
-      - name: Install Buildozer and tools
+      - name: Install Python dependencies for Buildozer
         run: |
           python -m pip install --upgrade pip
-          pip install --upgrade cython
+          pip install --upgrade cython appdirs colorama jinja2 sh==1.14.3 packaging toml
           pip install --upgrade buildozer
 
       - name: Setup SDKManager and paths
@@ -46,25 +46,16 @@ jobs:
           
           yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --sdk_root=$ANDROID_HOME --licenses || true
 
-      - name: Build with Buildozer
+      - name: Build with Buildozer (Max Logging)
         env:
           ANDROIDSDK: "/home/runner/.buildozer/android/platform/android-sdk"
           ANDROIDNDK: "/home/runner/.buildozer/android/platform/android-ndk-r25b"
           ANDROIDAPI: "33"
-        run: buildozer -v android debug
+        # استخدام المستوى 2 في تسجيل الأخطاء لإجبار بيلدوزر على كشف السبب الخفي
+        run: buildozer --debug android debug
 
       - name: Upload APK Artifact
-        if: success()
         uses: actions/upload-artifact@v4
         with:
           name: package
           path: bin/*.apk
-
-      - name: Upload Build Logs on Failure
-        if: failure()
-        uses: actions/upload-artifact@v4
-        with:
-          name: build-logs
-          path: |
-            .buildozer/*.log
-            .buildozer/android/platform/*.log
