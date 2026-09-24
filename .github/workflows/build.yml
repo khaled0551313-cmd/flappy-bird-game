@@ -7,7 +7,9 @@ on:
 jobs:
   build:
     runs-on: ubuntu-22.04
-    timeout-minutes: 40
+    concurrency:
+      group: ${{ github.workflow }}-${{ github.ref }}
+      cancel-in-progress: true
 
     steps:
       - name: Checkout Code
@@ -32,28 +34,27 @@ jobs:
             git wget curl build-essential libssl-dev zlib1g-dev \
             libncurses5-dev libncursesw5-dev libsqlite3-dev \
             libffi-dev unzip zip openjdk-17-jdk ant libltdl7 \
+            autoconf automake libtool pkg-config \
             libstdc++6:i386 libgcc1:i386 zlib1g:i386 libncurses5:i386
 
       - name: Install Python Dependencies & Buildozer
         run: |
           python -m pip install --upgrade pip
-          # تثبيت إصدار Cython مستقر ومتوافق تماماً مع بايثون-أندرويد
-          pip install "cython<3.0,>=0.29.33" virtualenv
+          pip install --upgrade cython==0.29.36 virtualenv
           pip install --upgrade buildozer
 
-      - name: Setup Android SDK and Environment
+      - name: Pre-configure Android SDK Environment
         run: |
-          SDK_DIR="$HOME/.buildozer/android/platform/android-sdk"
-          mkdir -p "$SDK_DIR/cmdline-tools/latest"
-          wget -q https://dl.google.com/android/repository/commandlinetools-linux-9477386_latest.zip -O /tmp/cmdtools.zip
-          unzip -q /tmp/cmdtools.zip -d /tmp/
-          rm -rf "$SDK_DIR/cmdline-tools/latest/*"
-          mv /tmp/cmdline-tools/* "$SDK_DIR/cmdline-tools/latest/"
-          export PATH="$SDK_DIR/cmdline-tools/latest/bin:$PATH"
-          yes | sdkmanager --sdk_root="$SDK_DIR" --licenses || true
-          yes | sdkmanager --sdk_root="$SDK_DIR" "platforms;android-33" "build-tools;33.0.2" "platform-tools" "ndk;25b"
-          mkdir -p "$SDK_DIR/tools/bin"
-          ln -sf "$SDK_DIR/cmdline-tools/latest/bin/sdkmanager" "$SDK_DIR/tools/bin/sdkmanager"
+          mkdir -p ~/.buildozer/android/platform/android-sdk/cmdline-tools/latest
+          cd ~/.buildozer/android/platform/android-sdk/cmdline-tools/latest
+          wget -q https://dl.google.com/android/repository/commandlinetools-linux-9477386_latest.zip -O cmdtools.zip
+          unzip -q cmdtools.zip
+          mv cmdline-tools/* . 2>/dev/null || true
+          rm -rf cmdline-tools.zip cmdline-tools
+
+          export PATH="$HOME/.buildozer/android/platform/android-sdk/cmdline-tools/latest/bin:$PATH"
+          yes | sdkmanager --licenses || true
+          sdkmanager "platforms;android-33" "build-tools;33.0.2" "platform-tools" "ndk;25b"
 
       - name: Build APK with Buildozer
         env:
@@ -65,5 +66,5 @@ jobs:
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: release-apk
+          name: bird-sanctuary-apk
           path: bin/*.apk
