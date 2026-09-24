@@ -16,8 +16,10 @@ source.dir = .
 source.include_exts = py
 
 # (list) Application requirements
-# ركز هنا: بايثون وبايجيم فقط لضمان الاستقرار التام
 requirements = python3,pygame
+
+# (str) Version of your application (هذا هو السطر الذي كان ناقصاً وتمت إضافته)
+version = 0.1
 
 # (str) Supported orientations
 orientation = portrait
@@ -32,8 +34,5 @@ android.permissions = INTERNET
 android.archs = arm64-v8a
 
 [buildozer]
-# (int) Log level (0 = error only, 1 = info, 2 = debug)
 log_level = 2
-
-# (int) Display warning if buildozer is run as root (0 = False, 1 = False)
 warn_on_root = 1
