@@ -2,14 +2,14 @@ name: Build Android APK
 
 on:
   push:
-    branches: [ main, master ]
+    branches: [ "main", "master" ]
 
 jobs:
   build:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout Code
+      - name: Checkout code
         uses: actions/checkout@v4
 
       - name: Set up Python
@@ -17,40 +17,27 @@ jobs:
         with:
           python-version: '3.10'
 
-      - name: Set up Java
-        uses: actions/setup-java@v5
-        with:
-          distribution: 'temurin'
-          java-version: '17'
-
-      - name: Install System Dependencies
+      - name: Install dependencies
         run: |
-          sudo dpkg --add-architecture i386
           sudo apt-get update
           sudo apt-get install -y \
-            git wget curl build-essential libssl-dev zlib1g-dev \
-            libncurses5-dev libncursesw5-dev libsqlite3-dev \
-            libffi-dev unzip zip ant libltdl7 \
-            autoconf automake libtool pkg-config \
-            libstdc++6:i386 libgcc1:i386 zlib1g:i386 libncurses5:i386 \
-            openjdk-17-jdk patch
+              git zip unzip autoconf libtool pkg-config \
+              zlib1g-dev libncurses5-dev libncursesw5-dev libtinfo5 \
+              cmake libffi-dev libssl-dev
 
       - name: Install Buildozer and Cython
         run: |
           pip install --upgrade pip
-          pip install --upgrade cython==0.29.36 virtualenv
-          pip install --upgrade buildozer
+          pip install --upgrade cython buildozer
 
-      - name: Build APK with Buildozer
-        env:
-          COLORTERM: "yes"
-          TERM: "xterm-256color"
-        run: |
-          buildozer -v android debug
+      - name: Clear old buildozer cache to force fresh download
+        run: rm -rf .buildozer
+
+      - name: Build with Buildozer
+        run: buildozer -v android debug
 
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
-        if: always()
         with:
-          name: bird-sanctuary-apk
+          name: package
           path: bin/*.apk
