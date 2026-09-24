@@ -9,12 +9,17 @@ package.name = flappybird
 # (str) Package domain (needed for android packaging)
 package.domain = org.flappy
 
+# (str) Source directory where the application lives
+source.dir = .
+
 # (list) Source files to include (let it include your python script and assets)
 source.include_exts = py,png,jpg,kv,atlas,ttf,wav
 
 # (list) Application requirements
-# استخدام إصدار مستقر ومباشر لضمان عدم حدوث مشاكل التطابق
 requirements = python3,pygame
+
+# (str) Version of the application
+version = 0.1
 
 # (str) Supported orientations (landscape or portrait)
 orientation = portrait
