@@ -32,16 +32,15 @@ jobs:
           pip install --upgrade cython
           pip install --upgrade buildozer
 
-      - name: Install Android SDK Build-Tools (AIDL fix)
+      - name: Fix SDK Command-Line Tools Structure
         run: |
-          mkdir -p $HOME/.buildozer/android/platform/android-sdk/build-tools/33.0.2
-          # تثبيت حزمة الـ build-tools لضمان توفر aidl ومكونات الـ SDK
-          sdkmanager --sdk_root=$HOME/.buildozer/android/platform/android-sdk "build-tools;33.0.2" "platforms;android-33" || true
-
-      - name: Clear old buildozer cache (keep sdk)
-        run: |
-          # لا مسح كامل للـ .buildozer حتى نقي المحتوى المحمل، فقط تنظيف الكاش القديم للعبة
-          rm -rf .buildozer
+          mkdir -p $HOME/.buildozer/android/platform/android-sdk/cmdline-tools/latest
+          # تحميل أدوات سطر الأوامر الرسمية لأندرويد ووضعها في المسار الصحيح لتوفير sdkmanager
+          wget -q https://dl.google.com/android/repository/commandlinetools-linux-9477386_latest.zip -O /tmp/cmdtools.zip
+          unzip -q /tmp/cmdtools.zip -d /tmp/cmd-tools-temp
+          rm -rf /tmp/cmd-tools-temp/cmdline-tools/latest/* || true
+          cp -r /tmp/cmd-tools-temp/cmdline-tools/* $HOME/.buildozer/android/platform/android-sdk/cmdline-tools/latest/
+          rm -rf /tmp/cmdtools.zip /tmp/cmd-tools-temp
 
       - name: Build with Buildozer
         run: buildozer -v android debug
