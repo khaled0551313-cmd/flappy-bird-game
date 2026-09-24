@@ -7,7 +7,7 @@ source.dir = .
 source.include_exts = py,png,jpg,kv,atlas,ttf,wav
 
 # استخدام pygame-ce بدلاً من pygame العادية
-requirements = python3,pygame-ce
+requirements = python3==3.10.12,pygame-ce
 
 version = 0.1
 orientation = portrait
