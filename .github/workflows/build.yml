@@ -32,14 +32,22 @@ jobs:
           pip install --upgrade cython
           pip install --upgrade buildozer
 
-      - name: Fix SDK Command-Line Tools Structure
+      - name: Setup Android SDK and fix sdkmanager path for Buildozer
         run: |
+          # إنشاء هيكل المجلدات الكامل لضمان توافق المسارين القديم والحديث
           mkdir -p $HOME/.buildozer/android/platform/android-sdk/cmdline-tools/latest
-          # تحميل أدوات سطر الأوامر الرسمية لأندرويد ووضعها في المسار الصحيح لتوفير sdkmanager
+          mkdir -p $HOME/.buildozer/android/platform/android-sdk/tools/bin
+          
+          # تحميل أدوات سطر الأوامر الرسمية لأندرويد
           wget -q https://dl.google.com/android/repository/commandlinetools-linux-9477386_latest.zip -O /tmp/cmdtools.zip
           unzip -q /tmp/cmdtools.zip -d /tmp/cmd-tools-temp
-          rm -rf /tmp/cmd-tools-temp/cmdline-tools/latest/* || true
+          
+          # نسخ الأدوات للمسار الحديث
           cp -r /tmp/cmd-tools-temp/cmdline-tools/* $HOME/.buildozer/android/platform/android-sdk/cmdline-tools/latest/
+          
+          # عمل نسخة ومسار مطابقة للمسار القديم الذي يبحث عنه buildozer
+          cp -r /tmp/cmd-tools-temp/cmdline-tools/bin/* $HOME/.buildozer/android/platform/android-sdk/tools/bin/ || true
+          
           rm -rf /tmp/cmdtools.zip /tmp/cmd-tools-temp
 
       - name: Build with Buildozer
