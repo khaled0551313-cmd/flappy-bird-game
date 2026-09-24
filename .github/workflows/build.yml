@@ -7,64 +7,20 @@ on:
 jobs:
   build:
     runs-on: ubuntu-22.04
-    concurrency:
-      group: ${{ github.workflow }}-${{ github.ref }}
-      cancel-in-progress: true
 
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      - name: Set up Python
-        uses: actions/setup-python@v5
+      - name: Build with Buildozer
+        uses: kivy/buildozer-action@v1
         with:
-          python-version: '3.10'
-
-      - name: Setup Java JDK
-        uses: actions/setup-java@v4
-        with:
-          distribution: 'temurin'
-          java-version: '17'
-
-      - name: Install System Dependencies
-        run: |
-          sudo dpkg --add-architecture i386
-          sudo apt-get update
-          sudo apt-get install -y \
-            git wget curl build-essential libssl-dev zlib1g-dev \
-            libncurses5-dev libncursesw5-dev libsqlite3-dev \
-            libffi-dev unzip zip openjdk-17-jdk ant libltdl7 \
-            autoconf automake libtool pkg-config \
-            libstdc++6:i386 libgcc1:i386 zlib1g:i386 libncurses5:i386
-
-      - name: Install Python Dependencies & Buildozer
-        run: |
-          python -m pip install --upgrade pip
-          pip install --upgrade cython==0.29.36 virtualenv
-          pip install --upgrade buildozer
-
-      - name: Pre-configure Android SDK Environment
-        run: |
-          mkdir -p ~/.buildozer/android/platform/android-sdk/cmdline-tools/latest
-          cd ~/.buildozer/android/platform/android-sdk/cmdline-tools/latest
-          wget -q https://dl.google.com/android/repository/commandlinetools-linux-9477386_latest.zip -O cmdtools.zip
-          unzip -q cmdtools.zip
-          mv cmdline-tools/* . 2>/dev/null || true
-          rm -rf cmdline-tools.zip cmdline-tools
-
-          export PATH="$HOME/.buildozer/android/platform/android-sdk/cmdline-tools/latest/bin:$PATH"
-          yes | sdkmanager --licenses || true
-          sdkmanager "platforms;android-33" "build-tools;33.0.2" "platform-tools" "ndk;25b"
-
-      - name: Build APK with Buildozer
+          command: buildozer -v android debug
         env:
           COLORTERM: "yes"
-          TERM: "xterm-256color"
-        run: |
-          buildozer -v android debug
 
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: bird-sanctuary-apk
+          name: bird-game-apk
           path: bin/*.apk
