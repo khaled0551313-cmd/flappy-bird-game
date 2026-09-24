@@ -1,21 +1,40 @@
 [app]
 
-title = Bird Sanctuary
-package.name = birdsanctuary
-package.domain = org.cozy
-source.dir = .
-source.include_exts = py
-requirements = python3==3.10,pygame
-version = 0.1
-orientation = portrait
-fullscreen = 1
-android.permissions = INTERNET
-android.archs = arm64-v8a
+# (str) Title of your application
+title = Flappy Bird Game
 
-# أضف هذه الأسطر الجديدة لضمان استقرار التحميل
-p4a.branch = master
-android.accept_sdk_license = True
+# (str) Package name
+package.name = flappybird
+
+# (str) Package domain (needed for android packaging)
+package.domain = org.flappy
+
+# (list) Source files to include (let it include your python script and assets)
+source.include_exts = py,png,jpg,kv,atlas,ttf,wav
+
+# (list) Application requirements
+# استخدام إصدار مستقر ومباشر لضمان عدم حدوث مشاكل التطابق
+requirements = python3,pygame
+
+# (str) Supported orientations (landscape or portrait)
+orientation = portrait
+
+# (list) Permissions
+android.permissions = INTERNET
+
+# (int) Target Android API, should be as high as possible.
+android.api = 33
+
+# (int) Minimum API your APK will support.
+android.minapi = 24
+
+# (str) Android NDK version to use
+android.ndk = 27.3.13750724
+
+# (bool) Use --private data storage (True) or --dir public storage (False)
+android.private_storage = True
 
 [buildozer]
+
+# (int) Log level (0 = error only, 1 = info, 2 = debug command)
 log_level = 2
-warn_on_root = 1
