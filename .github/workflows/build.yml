@@ -32,9 +32,9 @@ jobs:
           pip install --upgrade cython
           pip install --upgrade buildozer
 
-      - name: Setup Android SDK and fix sdkmanager path for Buildozer
+      - name: Setup Custom Android SDK and NDK paths for Buildozer
         run: |
-          # إنشاء هيكل المجلدات الكامل لضمان توافق المسارين القديم والحديث
+          # إنشاء مسارات البيئة الخاصة بـ buildozer بعيداً عن مسارات السيرفر الافتراضية المتعارضة
           mkdir -p $HOME/.buildozer/android/platform/android-sdk/cmdline-tools/latest
           mkdir -p $HOME/.buildozer/android/platform/android-sdk/tools/bin
           
@@ -42,15 +42,18 @@ jobs:
           wget -q https://dl.google.com/android/repository/commandlinetools-linux-9477386_latest.zip -O /tmp/cmdtools.zip
           unzip -q /tmp/cmdtools.zip -d /tmp/cmd-tools-temp
           
-          # نسخ الأدوات للمسار الحديث
+          # نسخ الأدوات للمسار الحديث والقديم لضمان توافق تام
           cp -r /tmp/cmd-tools-temp/cmdline-tools/* $HOME/.buildozer/android/platform/android-sdk/cmdline-tools/latest/
-          
-          # عمل نسخة ومسار مطابقة للمسار القديم الذي يبحث عنه buildozer
           cp -r /tmp/cmd-tools-temp/cmdline-tools/bin/* $HOME/.buildozer/android/platform/android-sdk/tools/bin/ || true
           
           rm -rf /tmp/cmdtools.zip /tmp/cmd-tools-temp
 
       - name: Build with Buildozer
+        env:
+          # فرض استخدام مسارات البيئة المحلية الصحيحة وتجنب تضارب مسارات السيرفر
+          ANDROIDSDK: "/home/runner/.buildozer/android/platform/android-sdk"
+          ANDROIDNDK: "/home/runner/.buildozer/android/platform/android-ndk-r25b"
+          ANDROIDAPI: "33"
         run: buildozer -v android debug
 
       - name: Upload APK Artifact
