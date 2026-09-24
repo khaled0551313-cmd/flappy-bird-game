@@ -27,10 +27,10 @@ orientation = portrait
 # (list) Permissions
 android.permissions = INTERNET
 
-# (int) Target Android API, should be as high as possible.
+# (int) Target Android API
 android.api = 33
 
-# (int) Minimum API your APK will support.
+# (int) Minimum API your APK will support
 android.minapi = 24
 
 # (str) Android NDK version to use
