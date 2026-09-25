@@ -1,16 +1,16 @@
 [app]
 
-title = Flappy Bird Game
-package.name = flappybird
-package.domain = org.flappy
+title = 3D Cube Engine
+package.name = cubethreed
+package.domain = org.engine3d
 source.dir = .
 source.include_exts = py,png,jpg,kv,atlas,ttf,wav
 
-# استخدام pygame-ce بدلاً من pygame العادية
+# استخدام kivy بدلاً من pygame لضمان سرعة الرسم وتوافق الـ Mesh 3D
 requirements = python3,kivy
 
 version = 0.1
-orientation = portrait
+orientation = landscape
 android.permissions = INTERNET
 android.api = 33
 android.minapi = 21
