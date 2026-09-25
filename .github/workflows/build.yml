@@ -6,56 +6,19 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+    - uses: actions/checkout@v3
 
-      - name: Set up Python 3.10
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.10'
+    - name: Set up JDK 17
+      uses: actions/setup-java@v3
+      with:
+        java-version: '17'
+        distribution: 'temurin'
 
-      - name: Install system dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y \
-              git zip unzip autoconf libtool pkg-config \
-              zlib1g-dev libncurses5-dev libncursesw5-dev \
-              libtinfo5 cmake libffi-dev libssl-dev openjdk-17-jdk \
-              ant build-essential ccache
+    - name: Grant execute permission for gradlew
+      run: chmod +x gradlew
 
-      - name: Install Python dependencies for Buildozer
-        run: |
-          python -m pip install --upgrade pip
-          pip install --upgrade cython appdirs colorama jinja2 sh==1.14.3 packaging toml
-          pip install --upgrade buildozer
-
-      - name: Setup SDKManager and paths
-        run: |
-          export ANDROID_HOME=$HOME/.buildozer/android/platform/android-sdk
-          mkdir -p $ANDROID_HOME/cmdline-tools/latest
-          mkdir -p $ANDROID_HOME/tools/bin
-          
-          wget -q https://dl.google.com/android/repository/commandlinetools-linux-9477386_latest.zip -O /tmp/cmdtools.zip
-          unzip -q /tmp/cmdtools.zip -d /tmp/cmd-tools-temp
-          cp -r /tmp/cmd-tools-temp/cmdline-tools/* $ANDROID_HOME/cmdline-tools/latest/
-          cp -r /tmp/cmd-tools-temp/cmdline-tools/bin/* $ANDROID_HOME/tools/bin/
-          cp -r /tmp/cmd-tools-temp/cmdline-tools/lib $ANDROID_HOME/tools/ || true
-          
-          yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --sdk_root=$ANDROID_HOME --licenses || true
-
-      - name: Build with Buildozer (Max Logging)
-        env:
-          ANDROIDSDK: "/home/runner/.buildozer/android/platform/android-sdk"
-          ANDROIDNDK: "/home/runner/.buildozer/android/platform/android-ndk-r25b"
-          ANDROIDAPI: "33"
-        # استخدام المستوى 2 في تسجيل الأخطاء لإجبار بيلدوزر على كشف السبب الخفي
-        run: buildozer --debug android debug
-
-      - name: Upload APK Artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: package
-          path: bin/*.apk
+    - name: Build APK
+      run: ./gradlew assembleDebug --no-daemon
