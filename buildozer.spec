@@ -7,7 +7,7 @@ source.dir = .
 source.include_exts = py,png,jpg,kv,atlas,ttf,wav
 
 # استخدام pygame-ce بدلاً من pygame العادية
-requirements = python3,pygame-ce
+requirements = python3,kivy
 
 version = 0.1
 orientation = portrait
