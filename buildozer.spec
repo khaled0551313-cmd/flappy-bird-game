@@ -1,19 +1,24 @@
 [app]
 
 # (str) Title of your application
-title = My Game App
+title = Flappy Bird
 
 # (str) Package name
-package.name = mygameapp
+package.name = flappybird
 
 # (str) Package domain (needed for android packaging)
 package.domain = org.game
 
+# (str) Source directory where the application files are located
+source.dir = .
+
 # (list) Source files to include (let it match your python files and assets)
 source.include_exts = py,png,jpg,kv,atlas,json,mp3,wav
 
+# (str) Application versioning (مهم جداً: تم إضافته لمنع الخطأ)
+version = 1.0
+
 # (list) Application requirements
-# (أضف هنا المكتبات التي تستخدمها لعبتك، مثل kivy أو pygame وغيرها)
 requirements = python3,kivy
 
 # (str) Supported orientations
@@ -26,13 +31,13 @@ orientation = portrait
 # (list) Permissions
 android.permissions = INTERNET
 
-# (int) Target Android API, should be as high as possible.
+# (int) Target Android API
 android.api = 34
 
-# (int) Minimum API your APK will support (مهم جداً ألا يقل عن 24 ليتوافق مع جهازك)
+# (int) Minimum API your APK will support (ليتوافق مع One UI 6.1)
 android.min_api = 24
 
-# (list) Supported architectures (معمارية 64-bit الإلزامية لهواتف سامسونج الحديثة)
+# (list) Supported architectures (معمارية 64-bit لهواتف سامسونج الحديثة)
 android.archs = arm64-v8a
 
 # (bool) Indicate whether the application should be fullscreen or not
